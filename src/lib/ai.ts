@@ -1,8 +1,7 @@
 // AI Service - Google Gemini API (FREE!)
-// Fixed: No systemInstruction - using first message instead
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent";
 
 interface GeminiPart {
   text: string;
@@ -131,9 +130,8 @@ export async function analyzeSymptoms(params: {
 }) {
   const symptomsText = params.symptoms.join(", ");
 
-  const prompt = `أنت طبيب خبير في تحليل الأعراض. أجب بـ JSON فقط بالعربية بدون أي نص إضافي قبل أو بعد JSON.
+  const prompt = `أنت طبيب خبير في تحليل الأعراض. أجب بـ JSON فقط بالعربية بدون أي نص إضافي.
 
-الصيغة المطلوبة:
 {
   "possibleConditions": [{"name": "اسم الحالة", "probability": "40%", "description": "وصف", "causes": [], "riskFactors": []}],
   "recommendedSpecialty": "التخصص",
@@ -146,11 +144,11 @@ export async function analyzeSymptoms(params: {
   "disclaimer": "للإرشاد فقط"
 }
 
-مريض: ${params.age} سنة، الجنس: ${params.gender}
+مريض: ${params.age} سنة، ${params.gender}
 الأعراض: ${symptomsText}
-${params.description ? `وصف إضافي: ${params.description}` : ""}
+${params.description || ""}
 
-أرجع JSON فقط:`;
+JSON:`;
 
   try {
     const content = await callGemini(prompt);
@@ -171,16 +169,7 @@ ${params.description ? `وصف إضافي: ${params.description}` : ""}
 }
 
 export async function analyzeSkinImage(imageBase64: string) {
-  const prompt = `أنت طبيب جلدية خبير. أجب بـ JSON بالعربية:
-{
-  "possibleConditions": [{"name": "حالة", "probability": "50%", "description": "وصف", "isContagious": false}],
-  "severity": "منخفضة",
-  "isUrgent": false,
-  "treatments": {"medications": [], "homeRemedies": []},
-  "recommendations": [],
-  "disclaimer": "للإرشاد فقط"
-}
-أرجع JSON فقط.`;
+  const prompt = `أنت طبيب جلدية. أجب بـ JSON بالعربية: {"possibleConditions": [], "severity": "منخفضة", "disclaimer": "للإرشاد فقط"}`;
 
   try {
     const content = await callGemini(prompt);
@@ -197,18 +186,11 @@ export async function chatWithMedicalAssistant(
 ) {
   const lastMessage = messages[messages.length - 1]?.content || "";
   
-  const prompt = `أنت طبيب خبير اسمه "شفا" - مساعد طبي ذكي.
+  const prompt = `أنت طبيب اسمه "شفا". أجب بالعربية باختصار. في النهاية قل: "⚠️ للتوعية فقط."
 
-قواعد:
-1. أجب بالعربية دائماً
-2. قدم معلومات طبية دقيقة ومفيدة
-3. كن ودوداً ومتعاوناً
-4. في نهاية كل رد قل: "⚠️ هذه المعلومات للتوعية فقط. يرجى استشارة طبيب مختص."
-${userContext ? `\nمعلومات المريض: العمر ${userContext.age || "غير محدد"}، الجنس: ${userContext.gender || "غير محدد"}` : ""}
+${userContext ? `مريض: ${userContext.age} سنة، ${userContext.gender}\n` : ""}سؤال: ${lastMessage}
 
-سؤال المريض: ${lastMessage}
-
-أجب بالعربية:`;
+الجواب:`;
 
   try {
     return await callGemini(prompt);
