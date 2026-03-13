@@ -168,18 +168,6 @@ JSON:`;
   }
 }
 
-export async function analyzeSkinImage(imageBase64: string) {
-  const prompt = `أنت طبيب جلدية. أجب بـ JSON بالعربية: {"possibleConditions": [], "severity": "منخفضة", "disclaimer": "للإرشاد فقط"}`;
-
-  try {
-    const content = await callGemini(prompt);
-    const result = safeJsonParse(content);
-    return result || { possibleConditions: [], disclaimer: "للإرشاد فقط" };
-  } catch (error) {
-    throw error;
-  }
-}
-
 export async function chatWithMedicalAssistant(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
   userContext?: { age?: number; gender?: string }

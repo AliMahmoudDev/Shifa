@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   Heart, 
   Stethoscope, 
-  Image, 
   MessageCircle, 
   MapPin, 
   Shield, 
@@ -29,13 +28,6 @@ const features = [
     description: "صف أعراضك واحصل على تشخيص مبدئي وتوصية بالتخصص المناسب",
     href: "/symptoms",
     color: "bg-blue-500/10 text-blue-600",
-  },
-  {
-    icon: Image,
-    title: "تحليل الجلدية",
-    description: "ارفع صورة للمنطقة المصابة واحصل على تحليل ذكي لحالتك",
-    href: "/skin-analysis",
-    color: "bg-purple-500/10 text-purple-600",
   },
   {
     icon: MessageCircle,
