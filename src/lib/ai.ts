@@ -1,8 +1,7 @@
 // AI Service - Google Gemini API (FREE!)
-// Working on Vercel with correct model name
+// Fixed: No systemInstruction - using first message instead
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-// Using gemini-1.5-pro-latest - Stable and available
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent";
 
 interface GeminiPart {
@@ -16,9 +15,6 @@ interface GeminiContent {
 
 interface GeminiRequest {
   contents: GeminiContent[];
-  systemInstruction?: {
-    parts: { text: string }[];
-  };
   generationConfig?: {
     temperature: number;
     maxOutputTokens: number;
@@ -37,7 +33,7 @@ interface GeminiResponse {
   };
 }
 
-async function callGemini(systemPrompt: string, userPrompt: string): Promise<string> {
+async function callGemini(prompt: string): Promise<string> {
   if (!GEMINI_API_KEY) {
     throw new Error("GEMINI_API_KEY is not set");
   }
@@ -46,49 +42,9 @@ async function callGemini(systemPrompt: string, userPrompt: string): Promise<str
     contents: [
       {
         role: "user",
-        parts: [{ text: userPrompt }]
+        parts: [{ text: prompt }]
       }
     ],
-    systemInstruction: {
-      parts: [{ text: systemPrompt }]
-    },
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 4096
-    }
-  };
-
-  const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(request),
-  });
-
-  const data: GeminiResponse = await response.json();
-  
-  if (!response.ok || data.error) {
-    const errorMsg = data.error?.message || `HTTP ${response.status}`;
-    console.error("Gemini API error:", errorMsg);
-    throw new Error(`Gemini API error: ${errorMsg}`);
-  }
-
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-}
-
-async function chatGemini(messages: Array<{ role: string; content: string }>): Promise<string> {
-  if (!GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY is not set");
-  }
-
-  const contents: GeminiContent[] = messages.map(msg => ({
-    role: msg.role === "assistant" ? "model" : "user",
-    parts: [{ text: msg.content }]
-  }));
-
-  const request: GeminiRequest = {
-    contents,
     generationConfig: {
       temperature: 0.7,
       maxOutputTokens: 4096
@@ -175,25 +131,29 @@ export async function analyzeSymptoms(params: {
 }) {
   const symptomsText = params.symptoms.join(", ");
 
-  const systemPrompt = `أنت طبيب خبير. أجب بـ JSON فقط بالعربية بدون نص إضافي.
+  const prompt = `أنت طبيب خبير في تحليل الأعراض. أجب بـ JSON فقط بالعربية بدون أي نص إضافي قبل أو بعد JSON.
+
+الصيغة المطلوبة:
 {
-  "possibleConditions": [{"name": "اسم", "probability": "40%", "description": "وصف", "causes": [], "riskFactors": []}],
+  "possibleConditions": [{"name": "اسم الحالة", "probability": "40%", "description": "وصف", "causes": [], "riskFactors": []}],
   "recommendedSpecialty": "التخصص",
-  "urgency": "منخفضة/متوسطة/عالية",
+  "urgency": "منخفضة أو متوسطة أو عالية",
   "diagnosticMethods": [{"name": "فحص", "purpose": "غرض", "whatToExpect": "توقع"}],
   "treatments": {"medications": [], "homeRemedies": [], "lifestyleChanges": []},
   "recommendations": [],
   "warningSigns": [],
   "preventionTips": [],
   "disclaimer": "للإرشاد فقط"
-}`;
+}
 
-  const userPrompt = `مريض: ${params.age} سنة، ${params.gender}
+مريض: ${params.age} سنة، الجنس: ${params.gender}
 الأعراض: ${symptomsText}
-${params.description || ""}`;
+${params.description ? `وصف إضافي: ${params.description}` : ""}
+
+أرجع JSON فقط:`;
 
   try {
-    const content = await callGemini(systemPrompt, userPrompt);
+    const content = await callGemini(prompt);
     const result = safeJsonParse(content);
     
     if (!result) {
@@ -211,8 +171,19 @@ ${params.description || ""}`;
 }
 
 export async function analyzeSkinImage(imageBase64: string) {
+  const prompt = `أنت طبيب جلدية خبير. أجب بـ JSON بالعربية:
+{
+  "possibleConditions": [{"name": "حالة", "probability": "50%", "description": "وصف", "isContagious": false}],
+  "severity": "منخفضة",
+  "isUrgent": false,
+  "treatments": {"medications": [], "homeRemedies": []},
+  "recommendations": [],
+  "disclaimer": "للإرشاد فقط"
+}
+أرجع JSON فقط.`;
+
   try {
-    const content = await callGemini("أنت طبيب جلدية. أجب بـ JSON.", "وصف حالة جلدية.");
+    const content = await callGemini(prompt);
     const result = safeJsonParse(content);
     return result || { possibleConditions: [], disclaimer: "للإرشاد فقط" };
   } catch (error) {
@@ -224,14 +195,23 @@ export async function chatWithMedicalAssistant(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
   userContext?: { age?: number; gender?: string }
 ) {
-  const systemPrompt = `أنت طبيب اسمه "شفا". أجب بالعربية. في النهاية قل: "⚠️ للتوعية فقط."`;
+  const lastMessage = messages[messages.length - 1]?.content || "";
   
+  const prompt = `أنت طبيب خبير اسمه "شفا" - مساعد طبي ذكي.
+
+قواعد:
+1. أجب بالعربية دائماً
+2. قدم معلومات طبية دقيقة ومفيدة
+3. كن ودوداً ومتعاوناً
+4. في نهاية كل رد قل: "⚠️ هذه المعلومات للتوعية فقط. يرجى استشارة طبيب مختص."
+${userContext ? `\nمعلومات المريض: العمر ${userContext.age || "غير محدد"}، الجنس: ${userContext.gender || "غير محدد"}` : ""}
+
+سؤال المريض: ${lastMessage}
+
+أجب بالعربية:`;
+
   try {
-    const allMessages = [
-      { role: "user", content: systemPrompt },
-      ...messages
-    ];
-    return await chatGemini(allMessages);
+    return await callGemini(prompt);
   } catch (error) {
     throw error;
   }
