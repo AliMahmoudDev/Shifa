@@ -4,6 +4,7 @@ export const translations = {
     appName: "شفا",
     nav: {
       symptoms: "تحليل الأعراض",
+      skin: "تحليل الجلدية",
       chat: "المساعد الذكي",
       doctors: "الأطباء",
     },
@@ -128,6 +129,7 @@ export const translations = {
     appName: "Shifa",
     nav: {
       symptoms: "Symptom Analysis",
+      skin: "Skin Analysis",
       chat: "AI Assistant",
       doctors: "Doctors",
     },
