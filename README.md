@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Shifa Logo](public/logo.svg)
+![Shifa Homepage](public/homepage.png)
 
 ### منصة طبية ذكية للتشخيص المبدئي والإرشاد الصحي
 
@@ -11,7 +11,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-[عرض المشروع](#) | [الوثائق](#-الوثائق) | [المساهمة](#-المساهمة) | [التواصل](#-التواصل)
+[عرض المشروع](#) | [الوثائق](#-الوثائق) | [المساهمة](#-المساهمة)
 
 </div>
 
@@ -21,7 +21,6 @@
 
 - [نبذة عن المشروع](#-نبذة-عن-المشروع)
 - [المميزات](#-المميزات)
-- [المعاينة](#-المعاينة)
 - [التقنيات المستخدمة](#-التقنيات-المستخدمة)
 - [البدء السريع](#-البدء-السريع)
 - [هيكل المشروع](#-هيكل-المشروع)
@@ -63,14 +62,7 @@
 | علاجات | أدوية شائعة + علاجات منزلية |
 | توصيات | تغييرات نمط الحياة، علامات الخطر |
 
-### 2. 📸 تحليل صور الجلدية
-
-- رفع الصور بالسحب والإفلات
-- لصق الصور من الحافظة (Ctrl+V)
-- التقاط صورة مباشرة من الكاميرا
-- تحليل شامل للحالة الجلدية
-
-### 3. 💬 المساعد الطبي الذكي (شفا)
+### 2. 💬 المساعد الطبي الذكي (شفا)
 
 محادثة تفاعلية توفر:
 - إجابات فورية على الأسئلة الطبية
@@ -78,48 +70,35 @@
 - نصائح صحية وإرشادات
 - توجيه للتخصص المناسب
 
-### 4. 📍 البحث عن الأطباء
+### 3. 📍 البحث عن الأطباء
 
 - تحديد الموقع الجغرافي تلقائياً
 - فلاتر للتخصصات الطبية
 - التكامل مع خرائط جوجل
 
-### 5. 👤 الملف الشخصي
+### 4. 👤 الملف الشخصي
 
 - إدارة المعلومات الشخصية والطبية
 - رفع وتعديل صورة الملف الشخصي
 - نظام النقاط والمستويات
 
-### 6. 📜 سجل التشخيصات
+### 5. 📜 سجل التشخيصات
 
 - عرض تاريخ جميع التشخيصات
 - تفاصيل كل تشخيص سابق
 - إمكانية الحذف
 
-### 7. 🔔 نظام الإشعارات
+### 6. 🔔 نظام الإشعارات
 
 - إشعارات التشخيصات الجديدة
 - إشعارات النقاط والمكافآت
 - تذكيرات بالمراجعات
 
-### 8. 🔐 نظام المصادقة الكامل
+### 7. 🔐 نظام المصادقة الكامل
 
 - تسجيل حساب جديد
 - تسجيل الدخول/الخروج
 - حماية المسارات
-
----
-
-## 📱 المعاينة
-
-### الصفحة الرئيسية
-![Homepage](docs/screenshots/homepage.png)
-
-### تحليل الأعراض
-![Symptoms Analysis](docs/screenshots/symptoms.png)
-
-### المساعد الطبي
-![Chat](docs/screenshots/chat.png)
 
 ---
 
@@ -142,7 +121,7 @@
 |---------|-----------|
 | [Next.js API Routes](https://nextjs.org/docs/api-routes/introduction) | الـ API |
 | [Prisma ORM](https://www.prisma.io/) | قاعدة البيانات |
-| [SQLite](https://www.sqlite.org/) | قاعدة البيانات |
+| [PostgreSQL](https://www.postgresql.org/) | قاعدة البيانات |
 | [JWT](https://jwt.io/) | المصادقة |
 | [bcrypt](https://github.com/kelektiv/node.bcrypt.js) | تشفير كلمات المرور |
 
@@ -226,7 +205,6 @@ shifa/
 │   │   │   ├── 📁 profile/
 │   │   │   ├── 📁 reviews/
 │   │   │   ├── 📁 share/
-│   │   │   ├── 📁 skin/
 │   │   │   ├── 📁 stats/
 │   │   │   └── 📁 symptoms/
 │   │   ├── 📁 chat/              # صفحة المحادثة
@@ -236,7 +214,6 @@ shifa/
 │   │   ├── 📁 notifications/     # صفحة الإشعارات
 │   │   ├── 📁 profile/           # صفحة الملف الشخصي
 │   │   ├── 📁 reviews/           # صفحة التقييمات
-│   │   ├── 📁 skin-analysis/     # صفحة تحليل الجلدية
 │   │   ├── 📁 symptoms/          # صفحة تحليل الأعراض
 │   │   ├── layout.tsx            # التخطيط الرئيسي
 │   │   ├── page.tsx              # الصفحة الرئيسية
@@ -253,7 +230,6 @@ shifa/
 │   └── 📁 styles/                # الأنماط
 ├── 📁 prisma/
 │   └── schema.prisma             # هيكل قاعدة البيانات
-├── 📁 db/                        # ملفات قاعدة البيانات
 ├── .env                          # متغيرات البيئة
 ├── package.json
 ├── tailwind.config.ts
@@ -280,7 +256,7 @@ model User {
   bloodType   String?
   image       String?
   points      Int      @default(0)
-  level       String   @default("مبتدئ")
+  level       Int      @default(1)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -324,7 +300,7 @@ model Notification {
 model FavoriteDoctor {
   id          String   @id @default(cuid())
   userId      String
-  doctorName  String
+  name        String
   specialty   String
   address     String?
   phone       String?
@@ -363,7 +339,7 @@ model PointsHistory {
 model SharedResult {
   id          String   @id @default(cuid())
   userId      String
-  diagnosisId String
+  diagnosisId String?
   shareCode   String   @unique
   createdAt   DateTime @default(now())
   
@@ -464,19 +440,6 @@ Cookie: auth-token=<jwt_token>
 
 ---
 
-### تحليل صور الجلدية
-
-```http
-POST /api/skin
-Content-Type: application/json
-
-{
-  "image": "data:image/jpeg;base64,<base64_image_data>"
-}
-```
-
----
-
 ### المحادثة الطبية
 
 ```http
@@ -552,7 +515,7 @@ Cookie: auth-token=<jwt_token>
 {
   "diagnosesCount": 15,
   "points": 150,
-  "level": "متقدم",
+  "level": 3,
   "unreadNotifications": 3
 }
 ```
@@ -619,33 +582,6 @@ npm run test:e2e
 
 ---
 
-## 📦 النشر
-
-### Vercel (موصى به)
-
-```bash
-# تثبيت Vercel CLI
-npm i -g vercel
-
-# النشر
-vercel --prod
-```
-
-### Docker
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
----
-
 ## 🤝 المساهمة
 
 نرحب بمساهماتكم! يرجى اتباع الخطوات التالية:
@@ -668,22 +604,6 @@ CMD ["npm", "start"]
 ## 📄 الترخيص
 
 هذا المشروع مرخص تحت رخصة MIT - راجع ملف [LICENSE](LICENSE) للتفاصيل.
-
----
-
-## 📞 التواصل
-
-- **الموقع**: [shifa.app](https://shifa.app)
-- **البريد**: contact@shifa.app
-- **تويتر**: [@shifa_app](https://twitter.com/shifa_app)
-
----
-
-## 🙏 شكر خاص
-
-- [Shadcn/ui](https://ui.shadcn.com/) للمكونات الرائعة
-- [Lucide](https://lucide.dev/) للأيقونات
-- جميع المساهمين في المشروع
 
 ---
 
